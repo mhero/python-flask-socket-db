@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from models import db
+from models import db, user_tasks
 
 
 class User(db.Model):
@@ -7,10 +7,12 @@ class User(db.Model):
     User table
     """
 
-    __tablename__ = 'users'
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(512))
+    user_tasks = db.relationship('Task',
+                                 secondary=user_tasks, lazy='subquery',
+                                 backref=db.backref('users', lazy=True)
+                                )
 
     def __init__(self, name=None):
         self.name = name

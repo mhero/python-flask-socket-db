@@ -41,9 +41,10 @@ def create_task():
                   )
 
 
-@socketio.on('check')
+@socketio.on('getPokerData')
 def test_message(message):
-    emit('up', {'data': 'got it!'})
+    print(message)
+    emit('sendPokerData', {'data': 'got it!'}, broadcast=True)
 
 
 def create_app(config_name):

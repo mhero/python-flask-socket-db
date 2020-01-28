@@ -5,6 +5,12 @@ const HOST = "http://localhost:8000";
 const socket = io.connect(HOST);
 const axios = require('axios').default;
 
+const Card = ({value, onClick}) => {
+  return (
+    <button onClick={onClick} className="poker-card">{value}</button>
+  );
+}
+
 function App() {
 
   const [step, setStep] = useState(1);
@@ -106,10 +112,23 @@ function App() {
           <div>User ID: {userId}</div>
           <div>Game ID: {gameId}</div>
           <div>Task ID: {taskId}</div>
+
+          <div className="cards-panel">
+            <Card value={0} onClick={() => setVote(0)}/>
+            <Card value={1} onClick={() => setVote(1)}/>
+            <Card value={2} onClick={() => setVote(2)}/>
+            <Card value={3} onClick={() => setVote(3)}/>
+            <Card value={5} onClick={() => setVote(5)}/>
+            <Card value={8} onClick={() => setVote(8)}/>
+            <Card value={13} onClick={() => setVote(13)}/>
+            <Card value={21} onClick={() => setVote(21)}/>
+            <Card value={100} onClick={() => setVote(100)}/>
+          </div>
+
           <input type="text" id="vote" name="vote" 
                   placeholder="Enter vote"
                   onChange={(event) => setVote(event.target.value) }/>
-          <button type="button" onClick={askGameData}>Update!</button>
+          <button type="button">Next Task</button>
         </div>
       }
     </div>

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from models import db
-from services import UserService
+from services import UserService, GameService
 from flask_socketio import SocketIO, emit
 
 
@@ -19,6 +19,16 @@ def get_users():
 @app.route('/api/users', methods=['POST'])
 def create_user():
     return jsonify(UserService.create(request.json['name']))
+
+
+@app.route('/api/games', methods=['GET'])
+def get_game():
+    return jsonify(GameService.all())
+
+
+@app.route('/api/games', methods=['POST'])
+def create_game():
+    return jsonify(GameService.create(request.json['name']))
 
 
 @socketio.on('check')

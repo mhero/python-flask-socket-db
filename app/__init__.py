@@ -45,7 +45,10 @@ def create_task():
 
 @socketio.on('getPokerData')
 def test_message(message):
-    emit('sendPokerData', {'data': 'got it!'}, broadcast=True)
+    UserTaskService.create_or_update(message['task_id'],
+                                     message['user_id'],
+                                     message['vote']) 
+    emit('sendPokerData', {}, broadcast=True)
 
 
 def create_app(config_name):

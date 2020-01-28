@@ -71,9 +71,11 @@ function App() {
  
   return (
     <div className="App">
+      <h1>Poker Planning!</h1>
       { step === 1 && 
-        <div>
-          <div>
+        <div className="main-panel">
+          <div className="panel create-game-panel">
+            <h2>Create a game</h2>
             <input type="text" id="game" name="game" 
                 placeholder="Enter game name"
                 onChange={(event) => setGameName(event.target.value) }/>
@@ -85,8 +87,8 @@ function App() {
                 onChange={(event) => setTaskName(event.target.value) }/>
             <button type="button" onClick={createGame}>Create game!</button>
           </div>
-          or
-          <div>
+          <div className="panel join-game-panel">
+            <h2>Join a game</h2>
             <input type="text" id="game" name="game" 
                   placeholder="Enter game id"
                   onChange={(event) => setGameId(event.target.value) }/>

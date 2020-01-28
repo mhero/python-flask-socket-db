@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from models import db
-from services import UserService, GameService, TaskService
+from services import UserService, GameService, TaskService, UserTaskService
 from flask_socketio import SocketIO, emit
 
 
@@ -43,7 +43,6 @@ def create_task():
 
 @socketio.on('getPokerData')
 def test_message(message):
-    print(message)
     emit('sendPokerData', {'data': 'got it!'}, broadcast=True)
 
 

@@ -47,8 +47,12 @@ def create_task():
 def test_message(message):
     UserTaskService.create_or_update(message['task_id'],
                                      message['user_id'],
-                                     message['vote']) 
-    emit('sendPokerData', {}, broadcast=True)
+                                     message['vote'])
+    result = UserTaskService.get_all_users_data(message['task_id'])                                 
+    emit('sendPokerData', 
+         result,
+         broadcast=True
+         )
 
 
 def create_app(config_name):

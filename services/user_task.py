@@ -1,4 +1,4 @@
-from models import db, user_tasks
+from models import db, user_tasks, User, Task
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -45,3 +45,13 @@ class UserTaskService:
             UserTaskService.update(task_id, user_id, value)
         else:
             UserTaskService.create(task_id, user_id, value)
+
+    def get_all_users_data(task_id):
+        try:
+            return db.session.query(User.id, User.name, user_tasks.c.value).\
+                            join(user_tasks, user_tasks.c.user_id == User.id).\
+                            filter(user_tasks.c.task_id == task_id).\
+                            join(Task, Task.id == user_tasks.c.task_id).all()
+        except SQLAlchemyError as e:
+            error = str(e.__dict__)
+            return error

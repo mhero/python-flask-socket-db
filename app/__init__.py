@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_migrate import Migrate
 from models import db
 from services import UserService
@@ -11,9 +11,14 @@ migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
-@app.route('/users')
-def users():
+@app.route('/api/users', methods=['GET'])
+def get_users():
     return jsonify(UserService.all())
+
+
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    return jsonify(UserService.create(request.json['name']))
 
 
 @socketio.on('check')

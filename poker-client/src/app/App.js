@@ -46,7 +46,9 @@ function App() {
   }
 
   const askGameData = () =>{
-    socket.emit("getPokerData", {userId, gameId, vote});
+    socket.emit("getPokerData", 
+                { task_id: userId,  user_id: gameId, vote: vote }
+                );
   }
 
   const createGame = () => {

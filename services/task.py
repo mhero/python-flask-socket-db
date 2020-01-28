@@ -23,5 +23,5 @@ class TaskService:
                         filter(Task.status == Status.active).\
                         filter(Game.id == game_id).first()[0]
         except SQLAlchemyError as e:
-            error = str(e.__dict__['orig'])
+            error = str(e.__dict__)
             return error

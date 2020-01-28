@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_migrate import Migrate
+from flask_cors import CORS
 from models import db
 from services import UserService, GameService, TaskService, UserTaskService
 from flask_socketio import SocketIO, emit
@@ -7,6 +8,7 @@ from flask_socketio import SocketIO, emit
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
+CORS(app)
 migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins="*")
 

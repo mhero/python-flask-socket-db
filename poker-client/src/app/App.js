@@ -8,6 +8,7 @@ const axios = require('axios').default;
 function App() {
 
   const [step, setStep] = useState(1);
+  const [vote, setVote] = useState(-1);
 
   const [userId, setUserId] = useState(null);
   const [gameId, setGameId] = useState(null);
@@ -37,6 +38,17 @@ function App() {
     post(`${HOST}/api/tasks`, { name: taskName, game_id: game }, setTaskId);
   }
 
+  const getGameData = () => {
+    setStep(2);
+    socket.on("sendPokerData", (taskData) => {
+      console.log(taskData);
+    });
+  }
+
+  const askGameData = () =>{
+    socket.emit("getPokerData", {userId, gameId, vote});
+  }
+
   const createGame = () => {
     createUser();
     axios.post(
@@ -45,16 +57,16 @@ function App() {
     .then((response) => {
       setGameId(response.data.id);
       createTask(response.data.id);
+      getGameData();
     })
     .catch((error) => {
       console.log(error);
     });
-    setStep(2);
   }
 
   const enterGame = () => {
     createUser();
-    setStep(2);
+    getGameData();
   }
  
   return (
@@ -90,6 +102,10 @@ function App() {
           <div>User ID: {userId}</div>
           <div>Game ID: {gameId}</div>
           <div>Task ID: {taskId}</div>
+          <input type="text" id="vote" name="vote" 
+                  placeholder="Enter vote"
+                  onChange={(event) => setVote(event.target.value) }/>
+          <button type="button" onClick={askGameData}>Update!</button>
         </div>
       }
     </div>

@@ -43,7 +43,7 @@ class UserTaskService:
 
     def create_or_update(task_id, user_id, value):
         count = UserTaskService.record_exists(task_id, user_id)
-        if count >= 1:
+        if float(count) >= 1:
             UserTaskService.update(task_id, user_id, value)
         else:
             UserTaskService.create(task_id, user_id, value)

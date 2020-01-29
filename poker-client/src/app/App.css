@@ -57,3 +57,43 @@ button {
   background-color: white;
   border: 2px solid gray;
 }
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.votes-panel{
+  display: flex;
+  flex-wrap: wrap;
+  width: 700px;
+}
+
+.card-vote {
+  width: 80px;
+  height: 160px;
+  border: 2px solid gray;
+  margin: 5px;
+  margin-left: 80px;
+}
+
+.game-container {
+  display: flex;
+  margin: 50px auto;
+  justify-content: center;
+}
+
+.step-2 {
+  margin-top: 50px;
+}
+
+.vote-owner {
+  margin-top: 10px;
+}
+.vote-value {
+  margin-top: 40px;
+  font-size: 25px;
+}

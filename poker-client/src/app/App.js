@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 const io = require("socket.io-client");
-const HOST = "http://0.0.0.0:8000";
+const HOST = `http://${process.env.REACT_APP_HOST}:8000`;
 const socket = io.connect(HOST);
 const axios = require('axios').default;
 

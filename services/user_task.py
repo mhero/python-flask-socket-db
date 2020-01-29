@@ -40,7 +40,7 @@ class UserTaskService:
             db.session.rollback()
             error = str(e.__dict__)
             return error
-    
+
     def create_or_update(task_id, user_id, value):
         count = UserTaskService.record_exists(task_id, user_id)
         if count >= 1:

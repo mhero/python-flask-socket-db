@@ -14,7 +14,6 @@ const Card = ({value, onClick}) => {
 function App() {
 
   const [step, setStep] = useState(1);
-  const [vote, setVote] = useState(-1);
 
   const [userId, setUserId] = useState(null);
   const [gameId, setGameId] = useState(null);
@@ -23,6 +22,12 @@ function App() {
   const [gameName, setGameName] = useState(null);
   const [userName, setUserName] = useState(null);
   const [taskName, setTaskName] = useState(null);
+
+  const[poker, setPoker] = useState(null);
+
+  socket.on("sendPokerData", (taskData) => {
+    setPoker(taskData);
+  });
 
   const post = (url, object, callback) => {
     axios.post(
@@ -40,41 +45,32 @@ function App() {
     post(`${HOST}/api/users`, { name: userName }, setUserId);
   }
 
-  const createTask = (game) => {
-    post(`${HOST}/api/tasks`, { name: taskName, game_id: game }, setTaskId);
-  }
-
-  const getGameData = () => {
-    setStep(2);
-    socket.on("sendPokerData", (taskData) => {
-      console.log(taskData);
-    });
-  }
-
-  const askGameData = () =>{
-    socket.emit("getPokerData", 
-                { task_id: userId,  user_id: gameId, vote: vote }
-                );
-  }
-
   const createGame = () => {
     createUser();
     axios.post(
-      `${HOST}/api/games`, { name: gameName }
+      `${HOST}/api/games`, { game_name: gameName, task_name: taskName }
     )
     .then((response) => {
-      setGameId(response.data.id);
-      createTask(response.data.id);
-      getGameData();
+      setGameId(response.data.game);
+      setTaskId(response.data.task);
+      setStep(2);
     })
     .catch((error) => {
       console.log(error);
     });
   }
 
+  const gameData = (vote) => {
+    socket.emit(
+      "getPokerData", 
+      { game_id: gameId, user_id: userId, vote: vote }
+     );
+  }
+
   const enterGame = () => {
     createUser();
-    getGameData();
+    setStep(2);
+    gameData(0);
   }
  
   return (
@@ -109,26 +105,25 @@ function App() {
       }
       { step === 2 && 
         <div>
-          <div>User ID: {userId}</div>
-          <div>Game ID: {gameId}</div>
-          <div>Task ID: {taskId}</div>
+          <div>User: {userName}</div>
+          <div>Game {gameName} ID: {gameId}</div>
 
           <div className="cards-panel">
-            <Card value={0} onClick={() => setVote(0)}/>
-            <Card value={1} onClick={() => setVote(1)}/>
-            <Card value={2} onClick={() => setVote(2)}/>
-            <Card value={3} onClick={() => setVote(3)}/>
-            <Card value={5} onClick={() => setVote(5)}/>
-            <Card value={8} onClick={() => setVote(8)}/>
-            <Card value={13} onClick={() => setVote(13)}/>
-            <Card value={21} onClick={() => setVote(21)}/>
-            <Card value={100} onClick={() => setVote(100)}/>
+            <Card value={0} onClick={() => gameData(0)}/>
+            <Card value={1} onClick={() => gameData(1)}/>
+            <Card value={2} onClick={() => gameData(2)}/>
+            <Card value={3} onClick={() => gameData(3)}/>
+            <Card value={5} onClick={() => gameData(5)}/>
+            <Card value={8} onClick={() => gameData(8)}/>
+            <Card value={13} onClick={() => gameData(13)}/>
+            <Card value={21} onClick={() => gameData(21)}/>
+            <Card value={100} onClick={() => gameData(100)}/>
           </div>
-
-          <input type="text" id="vote" name="vote" 
-                  placeholder="Enter vote"
-                  onChange={(event) => setVote(event.target.value) }/>
-          <button type="button">Next Task</button>
+          <div>
+            {
+              poker && poker.map((item) => <li>{item[0]} {item[1]} {item[2]}</li>)
+            }
+          </div>
         </div>
       }
     </div>

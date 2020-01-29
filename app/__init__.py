@@ -4,14 +4,14 @@ from flask_cors import CORS
 from models import db
 from services import UserService, GameService, TaskService, UserTaskService
 from flask_socketio import SocketIO, emit
-
+import logging
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
 CORS(app)
 migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins="*")
-
+logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
@@ -30,7 +30,12 @@ def get_game():
 
 @app.route('/api/games', methods=['POST'])
 def create_game():
-    return jsonify(GameService.create(request.json['name']))
+    game = GameService.create(request.json['game_name'])
+    task = TaskService.create(
+                      request.json['task_name'],
+                      game['id'],
+                    )
+    return jsonify({'game': game['id'], 'task': task['id']})
 
 
 @app.route('/api/tasks', methods=['POST'])
@@ -45,10 +50,11 @@ def create_task():
 
 @socketio.on('getPokerData')
 def test_message(message):
-    UserTaskService.create_or_update(message['task_id'],
+    task = TaskService.get_active(message['game_id'])
+    UserTaskService.create_or_update(task,
                                      message['user_id'],
                                      message['vote'])
-    result = UserTaskService.get_all_users_data(message['task_id'])                                 
+    result = UserTaskService.get_all_users_data(task)                         
     emit('sendPokerData', 
          result,
          broadcast=True

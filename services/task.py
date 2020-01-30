@@ -12,6 +12,7 @@ class TaskService:
             db.session.commit()
             return schema.dump(task)
         except SQLAlchemyError as e:
+            db.session.rollback()
             error = str(e.__dict__)
             return error
 

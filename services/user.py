@@ -19,5 +19,6 @@ class UserService:
             db.session.commit()
             return schema.dump(user)
         except SQLAlchemyError as e:
+            db.session.rollback()
             error = str(e.__dict__)
             return error

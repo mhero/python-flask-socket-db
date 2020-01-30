@@ -24,6 +24,7 @@ class UserTaskService:
             db.session.execute(statement)
             db.session.commit()
         except SQLAlchemyError as e:
+            db.session.rollback()
             error = str(e.__dict__)
             return error
 
@@ -36,6 +37,7 @@ class UserTaskService:
             db.session.execute(statement)
             db.session.commit()
         except SQLAlchemyError as e:
+            db.session.rollback()
             error = str(e.__dict__)
             return error
     

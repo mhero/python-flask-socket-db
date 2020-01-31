@@ -11,9 +11,9 @@ class UserService:
         except SQLAlchemyError:
             return None
 
-    def create(name):
+    def create(socket_id, name):
         try:
-            user = User(name)
+            user = User(socket_id, name)
             schema = UserSchema()
             db.session.add(user)
             db.session.commit()

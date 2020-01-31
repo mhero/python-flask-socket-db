@@ -4,7 +4,7 @@ db = SQLAlchemy()
 
 user_tasks = db.Table('user_tasks',
     db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('user_id', db.String(512), db.ForeignKey('user.id'), primary_key=True),
     db.Column('value', db.Integer)
 )
 

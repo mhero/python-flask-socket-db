@@ -3,7 +3,6 @@ import './App.css';
 const io = require("socket.io-client");
 const HOST = `http://${process.env.REACT_APP_HOST}:8000`;
 const socket = io.connect(HOST);
-const axios = require('axios').default;
 
 const Card = ({value, onClick}) => {
   return (
@@ -14,60 +13,43 @@ const Card = ({value, onClick}) => {
 function App() {
 
   const [step, setStep] = useState(1);
-  const [userId, setUserId] = useState(null);
   const [gameId, setGameId] = useState(null);
 
   const [gameName, setGameName] = useState(null);
   const [userName, setUserName] = useState(null);
   const [taskName, setTaskName] = useState(null);
 
-  const[poker, setPoker] = useState(null);
+  const [poker, setPoker] = useState(null);
 
-  socket.on("sendPokerData", (taskData) => {
-    setPoker(taskData);
-  });
-
-  const post = (url, object, callback) => {
-    axios.post(
-      url, object
-    )
-    .then((response) => {
-      callback(response.data.id);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-
-  const createUser = () => {
-    post(`${HOST}/api/users`, { name: userName }, setUserId);
-  }
+  socket.on("send:poker_data", (taskData) => {
+    if (taskData.game == gameId) {
+      setPoker(taskData.result);
+    }
+  }); 
 
   const createGame = () => {
-    createUser();
-    axios.post(
-      `${HOST}/api/games`, { game_name: gameName, task_name: taskName }
-    )
-    .then((response) => {
-      setGameId(response.data.game);
-      setStep(2);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    socket.emit(
+      "create:game", 
+      { game_name: gameName, task_name: taskName, user_name: userName }
+    );
+    socket.on("send:game_data", (gameData) => setGameId(gameData.game));
+    setStep(2);
   }
 
   const gameData = (vote) => {
     socket.emit(
-      "getPokerData", 
-      { game_id: gameId, user_id: userId, vote: vote }
-     );
+      "get:game",
+      { game_id: gameId, vote: vote }
+    );
   }
 
   const enterGame = () => {
-    createUser();
-    setStep(2);
+    socket.emit(
+      "join:game", 
+      { user_name: userName }
+    );
     gameData(0);
+    setStep(2);
   }
  
   return (

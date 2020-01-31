@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_cors import CORS
 from models import db
@@ -13,52 +13,38 @@ migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins="*")
 logging.basicConfig(level=logging.DEBUG)
 
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    return jsonify(UserService.all())
 
-
-@app.route('/api/users', methods=['POST'])
-def create_user():
-    return jsonify(UserService.create(request.json['name']))
-
-
-@app.route('/api/games', methods=['GET'])
-def get_game():
-    return jsonify(GameService.all())
-
-
-@app.route('/api/games', methods=['POST'])
-def create_game():
-    game = GameService.create(request.json['game_name'])
+@socketio.on('create:game')
+def create_game(message):
+    sid = request.sid
+    game = GameService.create(message['game_name'])
     task = TaskService.create(
-                      request.json['task_name'],
+                      message['task_name'],
                       game['id'],
                     )
-    return jsonify({'game': game['id'], 'task': task['id']})
+    UserService.create(sid, message['user_name'])
+    UserTaskService.create_or_update(task['id'],
+                                     sid,
+                                     0)
+    emit('send:game_data', {'game': game['id'], 'task': task['id']})
 
 
-@app.route('/api/tasks', methods=['POST'])
-def create_task():
-    return jsonify(
-                    TaskService.create(
-                      request.json['name'],
-                      request.json['game_id'],
-                    )
-                  )
+@socketio.on('join:game')
+def join_game(message):
+    sid = request.sid
+    UserService.create(sid, message['user_name'])
 
 
-@socketio.on('getPokerData')
-def test_message(message):
+@socketio.on('get:game')
+def send_message(message):
+    sid = request.sid
     task = TaskService.get_active(message['game_id'])
     UserTaskService.create_or_update(task,
-                                     message['user_id'],
+                                     sid,
                                      message['vote'])
-    result = UserTaskService.get_all_users_data(task)                         
-    emit('sendPokerData', 
-         result,
-         broadcast=True
-         )
+    result = UserTaskService.get_all_users_data(task)
+    emit('send:poker_data',
+         {'result': result, 'game': message['game_id']}, broadcast=True)
 
 
 def create_app(config_name):

@@ -11,6 +11,7 @@ echo "MySQL started"
 flask db init
 flask db migrate
 flask db upgrade
+python3 -m pytest
 
 cd /mhero-flask
 python run.py

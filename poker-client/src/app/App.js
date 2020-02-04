@@ -39,7 +39,7 @@ function App() {
   const gameData = (vote) => {
     socket.emit(
       "get:game",
-      { game_id: gameId, vote: vote }
+      { game_uuid: gameId, vote: vote }
     );
   }
 

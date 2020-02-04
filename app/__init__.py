@@ -26,7 +26,7 @@ def create_game(message):
     UserTaskService.create_or_update(task['id'],
                                      sid,
                                      0)
-    emit('send:game_data', {'game': game['id'], 'task': task['id']})
+    emit('send:game_data', {'game': game['uuid'], 'task': task['id']})
 
 
 @socketio.on('join:game')
@@ -38,13 +38,13 @@ def join_game(message):
 @socketio.on('get:game')
 def send_message(message):
     sid = request.sid
-    task = TaskService.get_active(message['game_id'])
+    task = TaskService.get_active(message['game_uuid'])
     UserTaskService.create_or_update(task,
                                      sid,
                                      message['vote'])
     result = UserTaskService.get_all_users_data(task)
     emit('send:poker_data',
-         {'result': result, 'game': message['game_id']}, broadcast=True)
+         {'result': result, 'game': message['game_uuid']}, broadcast=True)
 
 
 def create_app(config_name):

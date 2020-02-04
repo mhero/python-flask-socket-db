@@ -19,9 +19,9 @@ class TaskService:
     def get_active(game_id):
         try:
             return db.session.query(Task.id, Task.name).\
-                        join(Game, Task.id == Game.id).\
+                        join(Game, Task.game_id == Game.id).\
                         filter(Task.status == Status.active).\
-                        filter(Game.id == game_id).first()[0]
+                        filter(Game.uuid == game_id).first()[0]
         except SQLAlchemyError as e:
             error = str(e.__dict__)
             return error

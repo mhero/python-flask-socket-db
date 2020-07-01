@@ -8,6 +8,7 @@ import logging
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('config.py')
+db.init_app(app)
 CORS(app)
 migrate = Migrate(app, db)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -48,5 +49,4 @@ def send_message(message):
 
 
 def create_app(config_name):
-    db.init_app(app)
     return app

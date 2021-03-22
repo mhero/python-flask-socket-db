@@ -17,3 +17,5 @@ _mailinglist
 docs/_build/
 
 node_modules/
+
+poker-client/.env 
